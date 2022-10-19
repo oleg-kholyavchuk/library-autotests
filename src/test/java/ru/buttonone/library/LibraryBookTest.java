@@ -12,12 +12,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.event.annotation.AfterTestMethod;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import ru.buttonone.dao.BookDao;
-import ru.buttonone.domain.Bcomment;
 import ru.buttonone.domain.Book;
 
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static ru.buttonone.library.Constant.*;
 
 @SuppressWarnings("All")
@@ -29,9 +28,6 @@ public class LibraryBookTest {
     public static final String TEST_T1 = "test_t1";
     public static final String TEST_G1 = "test_g1";
     public static final String TEST_A1 = "test_a1";
-
-    public static final int INT = 1;
-    public static final String COMMENTS = "/comments";
     public static final String CONNECTION = "Connection";
     public static final String KEEP_ALIVE = "keep-alive";
     public static final String NICKNAME = "nickname";
@@ -41,7 +37,7 @@ public class LibraryBookTest {
     private BookDao bookDao;
 
     @BeforeTestMethod
-    public void insertBookById() throws JsonProcessingException {
+    public void insertBook() throws JsonProcessingException {
         Book expectedBook = new Book(TEST_ID1, TEST_T1, TEST_A1, TEST_G1);
         String jsonExpectedBook = new ObjectMapper().writerWithDefaultPrettyPrinter()
                 .writeValueAsString(expectedBook);
@@ -85,6 +81,7 @@ public class LibraryBookTest {
                 .post(API_BOOKS_ADD)
                 .then()
                 .contentType(ContentType.JSON)
+                .body("title", is("t100"))
                 .statusCode(STATUS_CODE);
 
         deleteTestBook();
@@ -110,6 +107,7 @@ public class LibraryBookTest {
                 .put(API_BOOKS + id)
                 .then()
                 .contentType(ContentType.JSON)
+                .body("title", is("t100"))
                 .log().all()
                 .statusCode(STATUS_CODE);
 
@@ -119,7 +117,7 @@ public class LibraryBookTest {
     @DisplayName("удалить книгу по id и проверяем удалилась ли она")
     @Test
     public void shouldHaveCorrectDeleteBookById() throws JsonProcessingException {
-        insertBookById();
+        insertBook();
 
         String deleteBookId = bookDao.getBookIdByBookTitle(TEST_T1);
 
@@ -163,47 +161,6 @@ public class LibraryBookTest {
                 .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
                 .when()
                 .get(API_BOOKS + id)
-                .then()
-                .contentType(ContentType.JSON)
-                .log().all()
-                .statusCode(STATUS_CODE);
-    }
-
-    @DisplayName("Проверяем на содержания никнейма")
-    @Test
-    public void shouldHaveCorrectNicknameById() throws JsonProcessingException {
-
-        long id = bookDao.getId(1);
-
-        RestAssured
-                .given()
-                .baseUri(HTTP_LOCALHOST_8080)
-                .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
-                .when()
-                .get(API_BOOKS + id + COMMENTS)
-                .then()
-                .contentType(ContentType.JSON)
-                .body(NICKNAME, contains(NICK_1))
-                .log().all()
-                .statusCode(STATUS_CODE);
-    }
-
-    @DisplayName("Проверяем добавился ли никнейма")
-    @Test
-    public void shouldHaveCorrectAddNicknameById() throws JsonProcessingException {
-        Bcomment expectedBcomment = new Bcomment("1", "2", "nick1", "c1");
-        String jsonExpectedBcomment = new ObjectMapper().writerWithDefaultPrettyPrinter()
-                .writeValueAsString(expectedBcomment);
-
-        long id = bookDao.getId(INT);
-
-        RestAssured
-                .given()
-                .baseUri(HTTP_LOCALHOST_8080)
-                .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
-                .body(jsonExpectedBcomment)
-                .when()
-                .post(API_BOOKS + id + COMMENTS)
                 .then()
                 .contentType(ContentType.JSON)
                 .log().all()

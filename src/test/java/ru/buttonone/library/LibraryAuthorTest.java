@@ -7,9 +7,7 @@ import io.restassured.http.Header;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.buttonone.dao.AuthorDao;
 
 
 import static org.hamcrest.core.Is.is;
@@ -23,10 +21,7 @@ public class LibraryAuthorTest {
     public static final String AUTHORS = "authors";
     public static final String A_1 = "a1";
 
-    @Autowired
-    private AuthorDao authorDao;
-
-    @DisplayName("Проверяем содержится автор")
+    @DisplayName("Проверяем содержится ли  автор")
     @Test
     public void shouldHaveCorrectEntityInAuthor() throws JsonProcessingException {
 
