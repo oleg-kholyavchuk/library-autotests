@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
+import io.restassured.response.ValidatableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import ru.buttonone.dao.BookDao;
 import ru.buttonone.domain.Book;
 
+
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
@@ -74,7 +77,7 @@ public class LibraryBookTest {
 
         RestAssured
                 .given()
-                .baseUri(HTTP_LOCALHOST_8080)
+                .baseUri(HTTP_LOCALHOST_8081)
                 .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
                 .body(jsonExpectedBook)
                 .when()
@@ -91,16 +94,32 @@ public class LibraryBookTest {
     @Test
     public void shouldHaveCorrectEntityAddingBookId() throws JsonProcessingException {
 
+//        insertBook();
+
+//        ValidatableResponse validatableResponse = given()
+//                .when()
+//                .get("/api/books")
+//                .then()
+//                .statusCode(403);
+//
+//        List<Book> bookList = validatableResponse
+//                .extract()
+//                .body()
+//                .jsonPath().getList("", Book.class);
+//
+//        System.out.println("bookList = " + bookList);
+
         Book expectedBook = new Book("100", "t100", "a100", "100");
         String jsonExpectedBook = new ObjectMapper().writerWithDefaultPrettyPrinter()
                 .writeValueAsString(expectedBook);
 
-        long id = bookDao.getId(INT);
+        long id = bookDao.getId(INTID);
+
 
 
         RestAssured
                 .given()
-                .baseUri(HTTP_LOCALHOST_8080)
+                .baseUri(HTTP_LOCALHOST_8081)
                 .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
                 .body(jsonExpectedBook)
                 .when()
@@ -124,7 +143,7 @@ public class LibraryBookTest {
 
         RestAssured
                 .given()
-                .baseUri(HTTP_LOCALHOST_8080)
+                .baseUri(HTTP_LOCALHOST_8081)
                 .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
                 .when()
                 .delete(API_BOOKS + deleteBookId)
@@ -139,7 +158,7 @@ public class LibraryBookTest {
     public void shouldHaveCorrectGetAllBooks() {
         RestAssured
                 .given()
-                .baseUri(HTTP_LOCALHOST_8080)
+                .baseUri(HTTP_LOCALHOST_8081)
                 .when()
                 .get(API_BOOKS)
                 .then()
@@ -153,11 +172,11 @@ public class LibraryBookTest {
     @Test
     public void shouldHaveCorrectBookById() throws JsonProcessingException {
 
-        long id = bookDao.getId(INT);
+        long id = bookDao.getId(INTID);
 
         RestAssured
                 .given()
-                .baseUri(HTTP_LOCALHOST_8080)
+                .baseUri(HTTP_LOCALHOST_8081)
                 .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
                 .when()
                 .get(API_BOOKS + id)

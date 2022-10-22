@@ -34,7 +34,7 @@ public class LibraryBcommentTest {
 
         RestAssured
                 .given()
-                .baseUri(HTTP_LOCALHOST_8080)
+                .baseUri(HTTP_LOCALHOST_8081)
                 .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
                 .when()
                 .get(API_BOOKS_1_COMMENTS)
@@ -48,22 +48,26 @@ public class LibraryBcommentTest {
     @DisplayName("Проверяем добавился ли никнейма")
     @Test
     public void shouldHaveCorrectAddNicknameById() throws JsonProcessingException {
-        Bcomment expectedBcomment = new Bcomment("1", "2", "nick1", "c1");
+        Bcomment expectedBcomment = new Bcomment("1", "1", "string1", "string1");
         String jsonExpectedBcomment = new ObjectMapper().writerWithDefaultPrettyPrinter()
                 .writeValueAsString(expectedBcomment);
 
-        long id = bookDao.getId(INT);
+        long id = bookDao.getId(INTID);
 
         RestAssured
                 .given()
-                .baseUri(HTTP_LOCALHOST_8080)
+                .baseUri(HTTP_LOCALHOST_8081)
                 .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
+                //.header(new Header("Content-Length", "86"))
+                .header(new Header("Host", "localhost:8081"))
                 .body(jsonExpectedBcomment)
+                .log().all()
                 .when()
-                .post(API_BOOKS + id + COMMENTS)
+                .post(API_BOOKS + "1" + COMMENTS)
                 .then()
-                .contentType(ContentType.JSON)
                 .log().all()
                 .statusCode(STATUS_CODE);
+
+        //given().config(RestAssured.config().encoderConfig(encoderconfig.appendDefaultContentCharsetToContentTypeIfUndefined(false)));
     }
 }

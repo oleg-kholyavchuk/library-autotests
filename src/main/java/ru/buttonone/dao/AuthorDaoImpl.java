@@ -20,7 +20,7 @@ public class AuthorDaoImpl implements AuthorDao {
 
     @Override
     public List<Author> getAuthorsByFio(String fio) {
-        return jdbc.query("select id, fio from authors where fio = fio", new AuthorsMapper());
+        return jdbc.query("select id, fio from authors where fio = :fio", new AuthorsMapper());
     }
 
 

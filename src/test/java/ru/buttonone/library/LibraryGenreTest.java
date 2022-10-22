@@ -26,7 +26,7 @@ public class LibraryGenreTest {
 
         RestAssured
                 .given()
-                .baseUri(HTTP_LOCALHOST_8080)
+                .baseUri(HTTP_LOCALHOST_8081)
                 .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
                 .when()
                 .get(API_BOOKS_1)

@@ -20,7 +20,7 @@ public class BcommentDaoImpl implements BcommentDao {
     @Override
     public List<Bcomment> getBcommentsByNickname(String nickname) {
 
-        return jdbc.query("select b.id, book_id, nickname, message from B_COMMENTS b join books bo on bo.id = b.book_id where b.nickname = nickname",
+        return jdbc.query("select b.id, book_id, nickname, message from B_COMMENTS b join books bo on bo.id = b.book_id where b.nickname = :nickname",
                 new BcommentsMapper());
     }
 
