@@ -68,7 +68,6 @@ public class LibraryBookTest {
                 .baseUri(HTTP_LOCALHOST_8080)
                 .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
                 .body(jsonExpectedBook)
-                .log().all()
                 .when()
                 .post(API_BOOKS_ADD)
                 .then()

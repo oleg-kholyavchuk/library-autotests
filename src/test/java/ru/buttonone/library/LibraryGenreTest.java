@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.event.annotation.AfterTestMethod;
+import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import ru.buttonone.dao.BookDao;
 import ru.buttonone.domain.Book;
 
@@ -25,6 +26,21 @@ public class LibraryGenreTest {
 
     @Autowired
     private BookDao bookDao;
+
+    @BeforeTestMethod
+    public void insertBook() throws JsonProcessingException {
+        Book expectedBook = new Book(TEST_ID1, TEST_T1, TEST_A1, TEST_G1);
+        String jsonExpectedBook = new ObjectMapper().writerWithDefaultPrettyPrinter()
+                .writeValueAsString(expectedBook);
+
+        given()
+                .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
+                .body(jsonExpectedBook)
+                .when()
+                .post(API_BOOKS_ADD)
+                .then()
+                .statusCode(STATUS_CODE);
+    }
 
     @AfterTestMethod
     public void deleteTestBook() {
@@ -41,19 +57,7 @@ public class LibraryGenreTest {
     @DisplayName("Проверяем на содержания никнейма")
     @Test
     public void shouldHaveCorrectEntityInDbAfterAddingGenre() throws JsonProcessingException {
-        Book expectedBook = new Book(TEST_ID1, TEST_T1, TEST_A1, TEST_G1);
-        String jsonExpectedBook = new ObjectMapper().writerWithDefaultPrettyPrinter()
-                .writeValueAsString(expectedBook);
-
-        RestAssured
-                .given()
-                .baseUri(HTTP_LOCALHOST_8080)
-                .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
-                .body(jsonExpectedBook)
-                .when()
-                .post(API_BOOKS_ADD)
-                .then()
-                .statusCode(STATUS_CODE);
+        insertBook();
 
         String id = bookDao.getBookIdByBookTitle(TEST_T1);
 

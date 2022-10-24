@@ -66,15 +66,13 @@ public class LibraryBcommentTest {
         String jsonExpectedBcomment = new ObjectMapper().writerWithDefaultPrettyPrinter()
                 .writeValueAsString(expectedBcomment);
 
-        int length = jsonExpectedBcomment.length();
-
-
         RestAssured
                 .given()
                 .baseUri(HTTP_LOCALHOST_8080)
-                .header(new Header("Content-Length", "86"))
+                //.header(new Header("Content-Length", "86"))
                 .header(new Header("Host", "localhost:8080"))
                 .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
+                .sessionId(id)
                 .body(jsonExpectedBcomment)
                 .log().all()
                 .when()
