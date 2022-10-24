@@ -23,6 +23,10 @@ public class AuthorDaoImpl implements AuthorDao {
         return jdbc.query("select id, fio from authors where fio = :fio", new AuthorsMapper());
     }
 
+    @Override
+    public String getAuthorIdByAuthorFio(String fio) {
+        return jdbc.getJdbcOperations().queryForObject("select a.id from authors a where a.fio = ?", new Object[]{fio}, String.class);
+    }
 
     private static class AuthorsMapper implements RowMapper<Author> {
         @Override

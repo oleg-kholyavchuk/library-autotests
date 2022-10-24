@@ -29,12 +29,6 @@ public class BookDaoImpl implements BookDao {
         return jdbc.getJdbcOperations().queryForObject("select b.id from books b where b.title = ?", new Object[]{title}, String.class);
     }
 
-
-    @Override
-    public long getId(long id) {
-        return jdbc.getJdbcOperations().queryForObject("select id from books b where b.id = ?", new Object[]{id}, Long.class);
-    }
-
     private static class BooksMapper implements RowMapper<Book> {
         @Override
         public Book mapRow(ResultSet rs, int rowNum) throws SQLException {

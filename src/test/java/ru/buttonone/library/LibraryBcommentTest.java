@@ -10,17 +10,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.event.annotation.AfterTestMethod;
 import ru.buttonone.dao.BookDao;
 import ru.buttonone.domain.Bcomment;
+import ru.buttonone.domain.Book;
 
 
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.contains;
 import static ru.buttonone.library.Constant.*;
 
 @SuppressWarnings("All")
 @SpringBootTest
 public class LibraryBcommentTest {
-    public static final String API_BOOKS_1_COMMENTS = "/api/books/1/comments";
     public static final String NICKNAME = "nickname";
     public static final String NICK_1 = "nick1";
     public static final String COMMENTS = "/comments";
@@ -28,21 +30,71 @@ public class LibraryBcommentTest {
     @Autowired
     private BookDao bookDao;
 
+    @AfterTestMethod
+    public void deleteTestBook() {
+
+        String deleteBookId = bookDao.getBookIdByBookTitle(TEST_T1);
+
+        given()
+                .when()
+                .delete(API_BOOKS + deleteBookId)
+                .then()
+                .statusCode(STATUS_CODE);
+    }
+
     @DisplayName("Проверяем содержится ли никнейм")
     @Test
     public void shouldHaveCorrectEntityInBComment() throws JsonProcessingException, ClassNotFoundException {
+        Book expectedBook = new Book(TEST_ID1, TEST_T1, TEST_A1, TEST_G1);
+        String jsonExpectedBook = new ObjectMapper().writerWithDefaultPrettyPrinter()
+                .writeValueAsString(expectedBook);
 
         RestAssured
                 .given()
-                .baseUri(HTTP_LOCALHOST_8081)
+                .baseUri(HTTP_LOCALHOST_8080)
+                .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
+                .body(jsonExpectedBook)
+                .log().all()
+                .when()
+                .post(API_BOOKS_ADD)
+                .then()
+                .statusCode(STATUS_CODE);
+
+        String id = bookDao.getBookIdByBookTitle(TEST_T1);
+
+        Bcomment expectedBcomment = new Bcomment("1", id, "nick1", "m1");
+        String jsonExpectedBcomment = new ObjectMapper().writerWithDefaultPrettyPrinter()
+                .writeValueAsString(expectedBcomment);
+
+        int length = jsonExpectedBcomment.length();
+
+
+        RestAssured
+                .given()
+                .baseUri(HTTP_LOCALHOST_8080)
+                .header(new Header("Content-Length", "86"))
+                .header(new Header("Host", "localhost:8080"))
+                .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
+                .body(jsonExpectedBcomment)
+                .log().all()
+                .when()
+                .post(API_BOOKS + id + COMMENTS)
+                .then()
+                .log().all()
+                .statusCode(STATUS_CODE);
+
+        RestAssured
+                .given()
+                .baseUri(HTTP_LOCALHOST_8080)
                 .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
                 .when()
-                .get(API_BOOKS_1_COMMENTS)
+                .get(API_BOOKS + id + COMMENTS)
                 .then()
                 .contentType(ContentType.JSON)
                 .body(NICKNAME,  contains(NICK_1))
                 .log().all()
                 .statusCode(STATUS_CODE);
+        deleteTestBook();
     }
 
     @DisplayName("Проверяем добавился ли никнейма")
@@ -52,14 +104,12 @@ public class LibraryBcommentTest {
         String jsonExpectedBcomment = new ObjectMapper().writerWithDefaultPrettyPrinter()
                 .writeValueAsString(expectedBcomment);
 
-        long id = bookDao.getId(INTID);
-
         RestAssured
                 .given()
-                .baseUri(HTTP_LOCALHOST_8081)
+                .baseUri(HTTP_LOCALHOST_8080)
                 .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
-                //.header(new Header("Content-Length", "86"))
-                .header(new Header("Host", "localhost:8081"))
+                //.header(new Header("Content-Length", "91"))
+                .header(new Header("Host", "localhost:8080"))
                 .body(jsonExpectedBcomment)
                 .log().all()
                 .when()
@@ -67,7 +117,5 @@ public class LibraryBcommentTest {
                 .then()
                 .log().all()
                 .statusCode(STATUS_CODE);
-
-        //given().config(RestAssured.config().encoderConfig(encoderconfig.appendDefaultContentCharsetToContentTypeIfUndefined(false)));
     }
 }
