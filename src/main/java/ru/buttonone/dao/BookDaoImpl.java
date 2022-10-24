@@ -20,7 +20,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public List<Book> getBooksByTitle(String title) {
 
-        return jdbc.query("select b.id as BID, b.title as BT, a.fio as authors, g.name as genre from books b join books_authors ba on b.id = ba.book_id join authors a on ba.author_id = a.id join genres g on b.genre_id  = g.id where title = title",
+        return jdbc.query("select b.id, b.title, a.fio, g.name from books b join books_authors ba on b.id = ba.book_id join authors a on ba.author_id = a.id join genres g on b.genre_id  = g.id where b.title = :title",
                 new BooksMapper());
     }
 
