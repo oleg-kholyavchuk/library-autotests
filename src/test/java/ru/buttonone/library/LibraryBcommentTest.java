@@ -6,11 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.Header;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.event.annotation.AfterTestMethod;
 import ru.buttonone.dao.BookDao;
 import ru.buttonone.domain.Bcomment;
 import ru.buttonone.domain.Book;
@@ -30,7 +31,22 @@ public class LibraryBcommentTest {
     @Autowired
     private BookDao bookDao;
 
-    @AfterTestMethod
+    @BeforeEach
+    public void insertBook() throws JsonProcessingException {
+        Book expectedBook = new Book(TEST_ID1, TEST_T1, TEST_A1, TEST_G1);
+        String jsonExpectedBook = new ObjectMapper().writerWithDefaultPrettyPrinter()
+                .writeValueAsString(expectedBook);
+
+        given()
+                .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
+                .body(jsonExpectedBook)
+                .when()
+                .post(API_BOOKS_ADD)
+                .then()
+                .statusCode(STATUS_CODE);
+    }
+
+    @AfterEach
     public void deleteTestBook() {
 
         String deleteBookId = bookDao.getBookIdByBookTitle(TEST_T1);
@@ -45,22 +61,8 @@ public class LibraryBcommentTest {
     @DisplayName("Проверяем содержится ли никнейм")
     @Test
     public void shouldHaveCorrectEntityInBComment() throws JsonProcessingException, ClassNotFoundException {
-        Book expectedBook = new Book(TEST_ID1, TEST_T1, TEST_A1, TEST_G1);
-        String jsonExpectedBook = new ObjectMapper().writerWithDefaultPrettyPrinter()
-                .writeValueAsString(expectedBook);
-
-        RestAssured
-                .given()
-                .baseUri(HTTP_LOCALHOST_8080)
-                .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
-                .body(jsonExpectedBook)
-                .log().all()
-                .when()
-                .post(API_BOOKS_ADD)
-                .then()
-                .statusCode(STATUS_CODE);
-
         String id = bookDao.getBookIdByBookTitle(TEST_T1);
+
 
         Bcomment expectedBcomment = new Bcomment("1", id, "nick1", "m1");
         String jsonExpectedBcomment = new ObjectMapper().writerWithDefaultPrettyPrinter()
@@ -92,7 +94,6 @@ public class LibraryBcommentTest {
                 .body(NICKNAME,  contains(NICK_1))
                 .log().all()
                 .statusCode(STATUS_CODE);
-        deleteTestBook();
     }
 
     @DisplayName("Проверяем добавился ли никнейма")

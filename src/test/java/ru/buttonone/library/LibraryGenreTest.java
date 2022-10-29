@@ -6,12 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.event.annotation.AfterTestMethod;
-import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import ru.buttonone.dao.BookDao;
 import ru.buttonone.domain.Book;
 
@@ -27,7 +27,7 @@ public class LibraryGenreTest {
     @Autowired
     private BookDao bookDao;
 
-    @BeforeTestMethod
+    @BeforeEach
     public void insertBook() throws JsonProcessingException {
         Book expectedBook = new Book(TEST_ID1, TEST_T1, TEST_A1, TEST_G1);
         String jsonExpectedBook = new ObjectMapper().writerWithDefaultPrettyPrinter()
@@ -42,7 +42,7 @@ public class LibraryGenreTest {
                 .statusCode(STATUS_CODE);
     }
 
-    @AfterTestMethod
+    @AfterEach
     public void deleteTestBook() {
 
         String deleteBookId = bookDao.getBookIdByBookTitle(TEST_T1);
@@ -57,7 +57,6 @@ public class LibraryGenreTest {
     @DisplayName("Проверяем на содержания никнейма")
     @Test
     public void shouldHaveCorrectEntityInDbAfterAddingGenre() throws JsonProcessingException {
-        insertBook();
 
         String id = bookDao.getBookIdByBookTitle(TEST_T1);
 
@@ -72,6 +71,5 @@ public class LibraryGenreTest {
                 .contentType(ContentType.JSON)
                 .log().all()
                 .statusCode(STATUS_CODE);
-        deleteTestBook();
     }
 }
