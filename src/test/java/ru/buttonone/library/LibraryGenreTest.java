@@ -17,7 +17,9 @@ import ru.buttonone.domain.Book;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
-import static ru.buttonone.library.Constant.*;
+import static ru.buttonone.constant.TestContstants.*;
+import static ru.buttonone.library.Endpoints.*;
+import static ru.buttonone.library.HttpCodes.STATUS_CODE;
 
 @SuppressWarnings("All")
 @SpringBootTest
@@ -56,7 +58,7 @@ public class LibraryGenreTest {
 
     @DisplayName("Проверяем на содержания никнейма")
     @Test
-    public void shouldHaveCorrectEntityInDbAfterAddingGenre() throws JsonProcessingException {
+    public void shouldHaveCorrectGetGenre() throws JsonProcessingException {
 
         String id = bookDao.getBookIdByBookTitle(TEST_T1);
 

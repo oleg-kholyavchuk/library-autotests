@@ -17,7 +17,9 @@ import ru.buttonone.domain.Book;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
-import static ru.buttonone.library.Constant.*;
+import static ru.buttonone.constant.TestContstants.*;
+import static ru.buttonone.library.Endpoints.*;
+import static ru.buttonone.library.HttpCodes.STATUS_CODE;
 
 @SuppressWarnings("All")
 @SpringBootTest
@@ -56,7 +58,7 @@ public class LibraryAuthorTest {
 
     @DisplayName("Проверяем содержится ли автор")
     @Test
-    public void shouldHaveCorrectEntityInAuthor() throws JsonProcessingException {
+    public void shouldHaveCorrectGetnAuthor() throws JsonProcessingException {
 
         String id = bookDao.getBookIdByBookTitle(TEST_T1);
 

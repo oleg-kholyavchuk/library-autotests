@@ -16,14 +16,15 @@ import ru.buttonone.domain.Book;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
-import static ru.buttonone.library.Constant.*;
+import static ru.buttonone.constant.TestContstants.*;
+import static ru.buttonone.library.Endpoints.*;
+import static ru.buttonone.library.HttpCodes.STATUS_CODE;
 
 @SuppressWarnings("All")
 @SpringBootTest
 public class LibraryBookTest {
     public static final String CONNECTION = "Connection";
     public static final String KEEP_ALIVE = "keep-alive";
-    public static final String NICKNAME = "nickname";
     public static final String TITLE = "title";
 
     @Autowired
@@ -58,7 +59,7 @@ public class LibraryBookTest {
 
     @DisplayName("Добовляем книгу")
     @Test
-    public void shouldHaveCorrectEntityAddingBook() throws JsonProcessingException {
+    public void shouldHaveCorrectPostBook() throws JsonProcessingException {
         Book expectedBook = new Book(TEST_ID1, TEST_T1, TEST_A1, TEST_G1);
         String jsonExpectedBook = new ObjectMapper().writerWithDefaultPrettyPrinter()
                 .writeValueAsString(expectedBook);
@@ -74,12 +75,22 @@ public class LibraryBookTest {
                 .contentType(ContentType.JSON)
                 .body(TITLE, is(TEST_T1))
                 .statusCode(STATUS_CODE);
+
+        RestAssured
+                .given()
+                .baseUri(HTTP_LOCALHOST_8080)
+                .when()
+                .get(API_BOOKS)
+                .then()
+                .log().all()
+                .header(CONNECTION, KEEP_ALIVE)
+                .statusCode(STATUS_CODE);
         deleteTestBook();
     }
 
     @DisplayName("Меняем данные книгу и проверяем поменялось ли содержимое")
     @Test
-    public void shouldHaveCorrectEntityAddingBookId() throws JsonProcessingException {
+    public void shouldHaveCorrectPutAddingBookId() throws JsonProcessingException {
         Book expectedBook = new Book(TEST_ID1, TEST_T1, TEST_A1, TEST_G1);
         String jsonExpectedBook = new ObjectMapper().writerWithDefaultPrettyPrinter()
                 .writeValueAsString(expectedBook);
@@ -108,7 +119,6 @@ public class LibraryBookTest {
 
         String deleteBookId = bookDao.getBookIdByBookTitle(TEST_T1);
 
-
         RestAssured
                 .given()
                 .baseUri(HTTP_LOCALHOST_8080)
@@ -131,12 +141,11 @@ public class LibraryBookTest {
                 .log().all()
                 .header(CONNECTION, KEEP_ALIVE)
                 .statusCode(STATUS_CODE);
-
     }
 
     @DisplayName("Проверяемм содержится ли книга по id")
     @Test
-    public void shouldHaveCorrectBookById() throws JsonProcessingException {
+    public void shouldHaveCorrectGetBookById() throws JsonProcessingException {
 
         Book expectedBook = new Book("", TEST_T1, TEST_A1, TEST_G1);
         String jsonExpectedBook = new ObjectMapper().writerWithDefaultPrettyPrinter()

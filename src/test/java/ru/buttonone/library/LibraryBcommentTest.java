@@ -19,7 +19,9 @@ import ru.buttonone.domain.Book;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.contains;
-import static ru.buttonone.library.Constant.*;
+import static ru.buttonone.constant.TestContstants.*;
+import static ru.buttonone.library.Endpoints.*;
+import static ru.buttonone.library.HttpCodes.STATUS_CODE;
 
 @SuppressWarnings("All")
 @SpringBootTest
@@ -63,7 +65,6 @@ public class LibraryBcommentTest {
     public void shouldHaveCorrectEntityInBComment() throws JsonProcessingException, ClassNotFoundException {
         String id = bookDao.getBookIdByBookTitle(TEST_T1);
 
-
         Bcomment expectedBcomment = new Bcomment("1", id, "nick1", "m1");
         String jsonExpectedBcomment = new ObjectMapper().writerWithDefaultPrettyPrinter()
                 .writeValueAsString(expectedBcomment);
@@ -99,9 +100,13 @@ public class LibraryBcommentTest {
     @DisplayName("Проверяем добавился ли никнейма")
     @Test
     public void shouldHaveCorrectAddNicknameById() throws JsonProcessingException {
-        Bcomment expectedBcomment = new Bcomment("1", "1", "string1", "string1");
+        String id = bookDao.getBookIdByBookTitle(TEST_T1);
+        System.out.println("id = " + id);
+
+        Bcomment expectedBcomment = new Bcomment("1", id, "string1", "string1");
         String jsonExpectedBcomment = new ObjectMapper().writerWithDefaultPrettyPrinter()
                 .writeValueAsString(expectedBcomment);
+        System.out.println("jsonExpectedBcomment.toString() = " + jsonExpectedBcomment);
 
         RestAssured
                 .given()
@@ -112,7 +117,7 @@ public class LibraryBcommentTest {
                 .body(jsonExpectedBcomment)
                 .log().all()
                 .when()
-                .post(API_BOOKS + "1" + COMMENTS)
+                .post(API_BOOKS + id + COMMENTS)
                 .then()
                 .log().all()
                 .statusCode(STATUS_CODE);
