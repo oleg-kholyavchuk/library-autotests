@@ -33,7 +33,7 @@ public class LibraryAuthorTest {
                 .writeValueAsString(EXPECTED_BOOK);
 
         given()
-                .header(HEADER)
+                .header(HEADER_CONTENT_TYPE_JSON)
                 .body(jsonExpectedBook)
                 .when()
                 .post(API_BOOKS_ADD)
@@ -60,7 +60,7 @@ public class LibraryAuthorTest {
         RestAssured
                 .given()
                 .baseUri(HTTP_LOCALHOST_8080)
-                .header(HEADER)
+                .header(HEADER_CONTENT_TYPE_JSON)
                 .when()
                 .get(API_BOOKS + id)
                 .then()

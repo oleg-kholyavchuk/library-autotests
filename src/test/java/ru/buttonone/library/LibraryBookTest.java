@@ -34,7 +34,7 @@ public class LibraryBookTest {
                 .writeValueAsString(EXPECTED_BOOK);
 
         given()
-                .header(HEADER)
+                .header(HEADER_CONTENT_TYPE_JSON)
                 .body(jsonExpectedBook)
                 .when()
                 .post(API_BOOKS_ADD)
@@ -62,7 +62,7 @@ public class LibraryBookTest {
         RestAssured
                 .given()
                 .baseUri(HTTP_LOCALHOST_8080)
-                .header(HEADER)
+                .header(HEADER_CONTENT_TYPE_JSON)
                 .body(jsonExpectedBook)
                 .when()
                 .post(API_BOOKS_ADD)
@@ -76,7 +76,7 @@ public class LibraryBookTest {
         RestAssured
                 .given()
                 .baseUri(HTTP_LOCALHOST_8080)
-                .header(HEADER)
+                .header(HEADER_CONTENT_TYPE_JSON)
                 .when()
                 .get(API_BOOKS + testId)
                 .then()
@@ -98,7 +98,7 @@ public class LibraryBookTest {
         RestAssured
                 .given()
                 .baseUri(HTTP_LOCALHOST_8080)
-                .header(HEADER)
+                .header(HEADER_CONTENT_TYPE_JSON)
                 .body(jsonExpectedBook)
                 .when()
                 .put(API_BOOKS + id)
@@ -120,7 +120,7 @@ public class LibraryBookTest {
         RestAssured
                 .given()
                 .baseUri(HTTP_LOCALHOST_8080)
-                .header(HEADER)
+                .header(HEADER_CONTENT_TYPE_JSON)
                 .when()
                 .delete(API_BOOKS + deleteBookId)
                 .then()
@@ -152,7 +152,7 @@ public class LibraryBookTest {
         RestAssured
                 .given()
                 .baseUri(HTTP_LOCALHOST_8080)
-                .header(HEADER)
+                .header(HEADER_CONTENT_TYPE_JSON)
                 .body(jsonExpectedBook)
                 .when()
                 .post(API_BOOKS_ADD)
@@ -162,7 +162,7 @@ public class LibraryBookTest {
         RestAssured
                 .given()
                 .baseUri(HTTP_LOCALHOST_8080)
-                .header(HEADER)
+                .header(HEADER_CONTENT_TYPE_JSON)
                 .when()
                 .get(API_BOOKS + id)
                 .then()

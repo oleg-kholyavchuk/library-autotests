@@ -40,7 +40,7 @@ public class LibraryBcommentTest {
                 .writeValueAsString(EXPECTED_BOOK);
 
         given()
-                .header(HEADER)
+                .header(HEADER_CONTENT_TYPE_JSON)
                 .body(jsonExpectedBook)
                 .when()
                 .post(API_BOOKS_ADD)
@@ -73,7 +73,7 @@ public class LibraryBcommentTest {
                 .baseUri(HTTP_LOCALHOST_8080)
                 .header(HEADER_CONTENT_LENGTH)
                 .header(HOST)
-                .header(HEADER)
+                .header(HEADER_CONTENT_TYPE_JSON)
                 .sessionId(id)
                 .body(jsonExpectedBcomment)
                 .log().all()
@@ -86,7 +86,7 @@ public class LibraryBcommentTest {
         RestAssured
                 .given()
                 .baseUri(HTTP_LOCALHOST_8080)
-                .header(HEADER)
+                .header(HEADER_CONTENT_TYPE_JSON)
                 .when()
                 .get(API_BOOKS + id + COMMENTS)
                 .then()
@@ -108,7 +108,7 @@ public class LibraryBcommentTest {
         RestAssured
                 .given()
                 .baseUri(HTTP_LOCALHOST_8080)
-                .header(HEADER)
+                .header(HEADER_CONTENT_TYPE_JSON)
                 .header(HEADER_HOST)
                 .header(HEADER_CONTENT_LENGTH)
                 .body(jsonExpectedBcomment)
