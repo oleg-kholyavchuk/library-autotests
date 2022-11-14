@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.6.12</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>ru.button-one</groupId>
 	<artifactId>library-autotests</artifactId>
@@ -26,7 +26,6 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-<!--			<scope>runtime</scope>-->
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -47,10 +46,9 @@
 		<dependency>
 			<groupId>io.rest-assured</groupId>
 			<artifactId>rest-assured</artifactId>
-<!--			<version>5.1.1</version>-->
 			<version>${rest-assured.version}</version>
 			<scope>test</scope>
-			<exclusions><!-- https://www.baeldung.com/maven-version-collision -->
+			<exclusions>
 				<exclusion>
 					<groupId>org.apache.groovy</groupId>
 					<artifactId>groovy</artifactId>
@@ -64,7 +62,6 @@
 		<dependency>
 			<groupId>io.rest-assured</groupId>
 			<artifactId>json-schema-validator</artifactId>
-<!--			<version>5.1.1</version>-->
 			<version>${rest-assured.version}</version>
 
 			<scope>test</scope>
@@ -94,6 +91,10 @@
 					<artifactId>junit</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
 		</dependency>
 	</dependencies>
 

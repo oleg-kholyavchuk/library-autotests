@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.buttonone.dao.BookDao;
 import ru.buttonone.domain.Bcomment;
-import ru.buttonone.domain.Book;
 
 
 import static io.restassured.RestAssured.given;
@@ -28,19 +27,20 @@ import static ru.buttonone.library.HttpCodes.STATUS_CODE;
 public class LibraryBcommentTest {
     public static final String NICKNAME = "nickname";
     public static final String NICK_1 = "nick1";
-    public static final String COMMENTS = "/comments";
+    public static final Header HOST = new Header("Host", "localhost:8080");
+    public static final Header HEADER_CONTENT_LENGTH = new Header("Content-Length", "86");
+    public static final Header HEADER_HOST = new Header("Host", "localhost:8080");
 
     @Autowired
     private BookDao bookDao;
 
     @BeforeEach
     public void insertBook() throws JsonProcessingException {
-        Book expectedBook = new Book(TEST_ID1, TEST_T1, TEST_A1, TEST_G1);
         String jsonExpectedBook = new ObjectMapper().writerWithDefaultPrettyPrinter()
-                .writeValueAsString(expectedBook);
+                .writeValueAsString(EXPECTED_BOOK);
 
         given()
-                .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
+                .header(HEADER)
                 .body(jsonExpectedBook)
                 .when()
                 .post(API_BOOKS_ADD)
@@ -50,7 +50,6 @@ public class LibraryBcommentTest {
 
     @AfterEach
     public void deleteTestBook() {
-
         String deleteBookId = bookDao.getBookIdByBookTitle(TEST_T1);
 
         given()
@@ -62,7 +61,7 @@ public class LibraryBcommentTest {
 
     @DisplayName("Проверяем содержится ли никнейм")
     @Test
-    public void shouldHaveCorrectEntityInBComment() throws JsonProcessingException, ClassNotFoundException {
+    public void shouldHaveCorrectEntityInBComment() throws JsonProcessingException {
         String id = bookDao.getBookIdByBookTitle(TEST_T1);
 
         Bcomment expectedBcomment = new Bcomment("1", id, "nick1", "m1");
@@ -72,9 +71,9 @@ public class LibraryBcommentTest {
         RestAssured
                 .given()
                 .baseUri(HTTP_LOCALHOST_8080)
-                //.header(new Header("Content-Length", "86"))
-                .header(new Header("Host", "localhost:8080"))
-                .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
+                .header(HEADER_CONTENT_LENGTH)
+                .header(HOST)
+                .header(HEADER)
                 .sessionId(id)
                 .body(jsonExpectedBcomment)
                 .log().all()
@@ -87,7 +86,7 @@ public class LibraryBcommentTest {
         RestAssured
                 .given()
                 .baseUri(HTTP_LOCALHOST_8080)
-                .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
+                .header(HEADER)
                 .when()
                 .get(API_BOOKS + id + COMMENTS)
                 .then()
@@ -101,19 +100,17 @@ public class LibraryBcommentTest {
     @Test
     public void shouldHaveCorrectAddNicknameById() throws JsonProcessingException {
         String id = bookDao.getBookIdByBookTitle(TEST_T1);
-        System.out.println("id = " + id);
 
         Bcomment expectedBcomment = new Bcomment("1", id, "string1", "string1");
         String jsonExpectedBcomment = new ObjectMapper().writerWithDefaultPrettyPrinter()
                 .writeValueAsString(expectedBcomment);
-        System.out.println("jsonExpectedBcomment.toString() = " + jsonExpectedBcomment);
 
         RestAssured
                 .given()
                 .baseUri(HTTP_LOCALHOST_8080)
-                .header(new Header(CONTENT_TYPE, APPLICATION_JSON))
-                //.header(new Header("Content-Length", "91"))
-                .header(new Header("Host", "localhost:8080"))
+                .header(HEADER)
+                .header(HEADER_HOST)
+                .header(HEADER_CONTENT_LENGTH)
                 .body(jsonExpectedBcomment)
                 .log().all()
                 .when()
