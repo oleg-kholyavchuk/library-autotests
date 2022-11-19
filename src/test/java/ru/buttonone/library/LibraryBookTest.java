@@ -11,11 +11,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.event.annotation.AfterTestMethod;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import ru.buttonone.dao.BookDao;
+import ru.buttonone.domain.Book;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
-import static ru.buttonone.constant.TestContstants.*;
 import static ru.buttonone.library.Endpoints.*;
+import static ru.buttonone.library.HttpCodes.HEADER_CONTENT_TYPE_JSON;
 import static ru.buttonone.library.HttpCodes.STATUS_CODE;
 
 @SuppressWarnings("All")
@@ -24,6 +25,11 @@ public class LibraryBookTest {
     public static final String CONNECTION = "Connection";
     public static final String KEEP_ALIVE = "keep-alive";
     public static final String TITLE = "title";
+    public static final String TEST_ID2 = "1";
+    public static final String TEST_T2 = "test_t2";
+    public static final String TEST_G2 = "test_g2";
+    public static final String TEST_A2 = "test_a2";
+    public static final Book EXPECTED_BOOK = new Book(TEST_ID2, TEST_T2, TEST_A2, TEST_G2);
 
     @Autowired
     private BookDao bookDao;
@@ -44,7 +50,7 @@ public class LibraryBookTest {
 
     @AfterTestMethod
     public void deleteTestBook() {
-        String deleteBookId = bookDao.getBookIdByBookTitle(TEST_T1);
+        String deleteBookId = bookDao.getBookIdByBookTitle(TEST_T2);
 
         given()
                 .when()
@@ -68,10 +74,10 @@ public class LibraryBookTest {
                 .post(API_BOOKS_ADD)
                 .then()
                 .contentType(ContentType.JSON)
-                .body(TITLE, is(TEST_T1))
+                .body(TITLE, is(TEST_T2))
                 .statusCode(STATUS_CODE);
 
-        String testId = bookDao.getBookIdByBookTitle(TEST_T1);
+        String testId = bookDao.getBookIdByBookTitle(TEST_T2);
 
         RestAssured
                 .given()
@@ -81,7 +87,7 @@ public class LibraryBookTest {
                 .get(API_BOOKS + testId)
                 .then()
                 .contentType(ContentType.JSON)
-                .body(TITLE, is(TEST_T1))
+                .body(TITLE, is(TEST_T2))
                 .log().all()
                 .statusCode(STATUS_CODE);
         deleteTestBook();
@@ -104,18 +110,19 @@ public class LibraryBookTest {
                 .put(API_BOOKS + id)
                 .then()
                 .contentType(ContentType.JSON)
-                .body(TITLE, is(TEST_T1))
+                .body(TITLE, is(TEST_T2))
                 .log().all()
                 .statusCode(STATUS_CODE);
         deleteTestBook();
     }
+
 
     @DisplayName("Удалить книгу по id")
     @Test
     public void shouldHaveCorrectDeleteBookById() throws JsonProcessingException {
         insertBook();
 
-        String deleteBookId = bookDao.getBookIdByBookTitle(TEST_T1);
+        String deleteBookId = bookDao.getBookIdByBookTitle(TEST_T2);
 
         RestAssured
                 .given()
